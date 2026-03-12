@@ -1,0 +1,5 @@
+savanna-reports/
+dist/
+*.exe
+/savanna
+testdata/
