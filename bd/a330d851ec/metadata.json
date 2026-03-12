@@ -1,0 +1,26 @@
+{
+  "cli_version": "0.4.8",
+  "checkpoint_id": "bda330d851ec",
+  "strategy": "manual-commit",
+  "branch": "add-readme",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "README.md"
+  ],
+  "sessions": [
+    {
+      "metadata": "/bd/a330d851ec/0/metadata.json",
+      "transcript": "/bd/a330d851ec/0/full.jsonl",
+      "context": "/bd/a330d851ec/0/context.md",
+      "content_hash": "/bd/a330d851ec/0/content_hash.txt",
+      "prompt": "/bd/a330d851ec/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 25,
+    "cache_creation_tokens": 60314,
+    "cache_read_tokens": 539543,
+    "output_tokens": 4132,
+    "api_call_count": 17
+  }
+}
