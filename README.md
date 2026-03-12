@@ -1,7 +1,7 @@
 # savanna
 
-[![Go Version](https://img.shields.io/github/go-mod/go-version/135yshr/savanna)](https://go.dev/)
-[![Go Report Card](https://goreportcard.com/badge/github.com/135yshr/savanna)](https://goreportcard.com/report/github.com/135yshr/savanna)
+[![Go Version](https://img.shields.io/github/go-mod/go-version/135yshr/savanna-vet-go)](https://go.dev/)
+[![Go Report Card](https://goreportcard.com/badge/github.com/135yshr/savanna-vet-go)](https://goreportcard.com/report/github.com/135yshr/savanna-vet-go)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A Go CLI tool that detects test smells in Go test files.
@@ -30,14 +30,14 @@ savanna analyzes Go test files using AST parsing and detects common test smells 
 ## Installation
 
 ```bash
-go install github.com/135yshr/savanna/cmd/savanna@latest
+go install github.com/135yshr/savanna-vet-go/cmd/savanna@latest
 ```
 
 ### Build from source
 
 ```bash
-git clone https://github.com/135yshr/savanna.git
-cd savanna
+git clone https://github.com/135yshr/savanna-vet-go.git
+cd savanna-vet-go
 go build -o savanna ./cmd/savanna/
 ```
 
@@ -64,6 +64,12 @@ savanna -disable MAGIC_NUMBER_TEST ./...
 
 # List all available smell types
 savanna -list
+
+# Show version
+savanna -version
+
+# Output JSON to custom directory
+savanna -format json -output ./test-reports ./...
 ```
 
 ### CLI Flags
@@ -82,7 +88,7 @@ savanna -list
 
 When test smells are detected, savanna displays a lion ASCII art banner along with the detected smells:
 
-```
+```text
 [EMPTY_TEST] example_test.go:10 in TestEmpty() - 空のテストとかお前それ@t_wadaの前でも同じ事言えんの？
 [SLEEPY_TEST] example_test.go:20 in TestSlow() - テストでsleepとかお前それ@t_wadaの前でも同じ事言えんの？
 ```
