@@ -8,10 +8,10 @@ A Go CLI tool that detects test smells in Go test files.
 
 ## Overview
 
-savanna analyzes Go test files using AST parsing and detects common test smells — patterns that indicate potential issues with test quality and maintainability. When smells are detected, a lion ASCII art roars with a [@t_wada](https://github.com/t-wada) meme message.
+savanna analyzes Go test files using the `go/analysis` framework and detects common test smells — patterns that indicate potential issues with test quality and maintainability. Integrates with `go vet -vettool` for seamless CI/editor support.
 
-- **Zero external dependencies** — stdlib only
-- **Fast** — leverages `go/ast` and `go/parser` for static analysis
+- **`go vet` integration** — works as a standard `vettool`
+- **Fast** — leverages `go/analysis` for static analysis
 - **Configurable** — enable/disable individual smell detectors
 
 ## Supported Test Smells
@@ -31,6 +31,7 @@ savanna analyzes Go test files using AST parsing and detects common test smells 
 
 ```bash
 go install github.com/135yshr/savanna-vet-go/cmd/savanna@latest
+go install github.com/135yshr/savanna-vet-go/cmd/savanna-vet@latest
 ```
 
 ### Build from source
@@ -39,9 +40,24 @@ go install github.com/135yshr/savanna-vet-go/cmd/savanna@latest
 git clone https://github.com/135yshr/savanna-vet-go.git
 cd savanna-vet-go
 go build -o savanna ./cmd/savanna/
+go build -o savanna-vet ./cmd/savanna-vet/
 ```
 
 ## Usage
+
+### go vet integration (recommended)
+
+`savanna-vet` を `go vet -vettool` として使用できます。
+
+```bash
+# go vet 経由で実行
+go vet -vettool=$(which savanna-vet) ./...
+
+# ローカルビルドから実行
+go vet -vettool=./savanna-vet ./...
+```
+
+### Standalone (multichecker)
 
 ```bash
 # Scan the current directory
