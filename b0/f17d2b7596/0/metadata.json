@@ -1,0 +1,32 @@
+{
+  "cli_version": "0.4.8",
+  "checkpoint_id": "b0f17d2b7596",
+  "session_id": "efd6834a-82b9-43b5-aced-3759acdd78d3",
+  "strategy": "manual-commit",
+  "created_at": "2026-03-16T07:33:20.694768Z",
+  "branch": "feat/auto-release",
+  "checkpoints_count": 0,
+  "files_touched": [
+    "cmd/savanna-vet/main.go"
+  ],
+  "agent": "Claude Code",
+  "turn_id": "4cd14d4c19aa",
+  "checkpoint_transcript_start": 248,
+  "transcript_lines_at_start": 248,
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-03-16T07:33:20.629474Z",
+    "agent_lines": 0,
+    "human_added": 12,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 12,
+    "agent_percentage": 0
+  }
+}
