@@ -4,53 +4,68 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-savanna is a Go (1.24+) CLI tool that detects test smells in Go test files using AST analysis. Inspired by [kawasima/savanna-maven-plugin](https://github.com/kawasima/savanna-maven-plugin) (Java/Maven version). When smells are detected, a lion ASCII art roars with a @t_wada meme message. Zero external dependencies (stdlib only).
+savanna is a Go (1.25+) CLI tool that detects test smells in Go test files using the `go/analysis` framework. Inspired by [kawasima/savanna-maven-plugin](https://github.com/kawasima/savanna-maven-plugin) (Java/Maven version). Integrates with `go vet -vettool` for seamless CI/editor support.
+
+### Dependencies
+
+- `golang.org/x/tools/go/analysis` — required for `go vet -vettool` integration (`unitchecker`/`multichecker`)
+- Transitive: `golang.org/x/mod`, `golang.org/x/sync` (required by `golang.org/x/tools`)
+
+> **Note:** The original "zero external dependencies" policy was relaxed to adopt the `go/analysis` framework. Only `golang.org/x/*` modules (quasi-stdlib) are permitted.
 
 ## Build & Test Commands
 
 ```bash
 # Build
 go build -o savanna ./cmd/savanna/
+go build -o savanna-vet ./cmd/savanna-vet/
 
 # Run all tests
 go test ./...
 
-# Run a single test
-go test ./analyzer/ -run TestEmptyTest
+# Run a single analyzer test
+go test ./analyzer/ -run TestAllAnalyzers/emptytest
 
 # Run with verbose output
 go test ./... -v
 
-# Run the tool against a directory
+# Run the tool (standalone via multichecker)
 go run ./cmd/savanna/ ./path/to/project
+
+# Run via go vet
+go vet -vettool=./savanna-vet ./...
 ```
-
-### CLI Flags
-
-`-format console|json` `-output <dir>` (JSON output dir) `-fail` (exit 1 on smells) `-enable SMELL1,SMELL2` `-disable SMELL1,SMELL2` `-list` (show all smell types) `-version`
 
 ## Architecture
 
-The tool parses `*_test.go` files into ASTs using `go/ast` and `go/parser`, then runs each function declaration through a pipeline of detectors. `vendor/` and dot-prefixed directories are automatically skipped.
+The tool uses `golang.org/x/tools/go/analysis` framework. Each smell detector is an `*analysis.Analyzer` that receives parsed files via `analysis.Pass` and reports diagnostics with `pass.Reportf`.
 
-**Flow:** `cmd/savanna/main.go` → `Scanner.ScanDir()` → parse files → run `Detector.Detect()` for each `*ast.FuncDecl` → collect `TestSmell` results → `Reporter.Report()`
+**Flow:** `cmd/savanna/main.go` (`multichecker.Main`) or `cmd/savanna-vet/main.go` (`unitchecker.Main`) → `AllAnalyzers()` → each Analyzer's `Run` func processes `pass.Files` → `pass.Reportf` for diagnostics
 
 ### Key abstractions
 
-- **`Detector` interface** (`analyzer/detector.go`): Each smell type implements `Detect(fset, file, fn) []TestSmell`. Detectors receive individual function declarations, not whole files.
-- **`Scanner`** (`analyzer/scanner.go`): Orchestrates file walking, AST parsing, and detector execution. Supports enable/disable filtering by `SmellType`.
-- **`Reporter` interface** (`reporter/reporter.go`): Output formatters (console with lion banner, JSON).
+- **`*analysis.Analyzer`** (`analyzer/*_analyzer.go`): Each smell type is an Analyzer with a `Run` function. Analyzers receive `*analysis.Pass` which provides file set, type info, and reporting.
+- **`AllAnalyzers()`** (`analyzer/analyzers.go`): Registry returning all Analyzer instances.
+- **Shared helpers** (`analyzer/detector.go`): `isTestFunc()`, `isHelperFunc()`, `testingParamName()`, `isPkgCall()`, assertion/print detection helpers.
 
-### Adding a new detector
+### Entry points
 
-1. Create `analyzer/<name>_detector.go` implementing `Detector` interface
-2. Add the `SmellType` constant, display name, and lion message to `analyzer/smell.go`
-3. Register in `analyzer/registry.go` → `AllDetectors()`
-4. Add tests in `analyzer/scanner_test.go` using `scanner.ScanSource(src)`
+- `cmd/savanna/main.go` — standalone execution via `multichecker.Main`
+- `cmd/savanna-vet/main.go` — `go vet -vettool` integration via `unitchecker.Main`
+
+### Adding a new analyzer
+
+1. Create `analyzer/<name>_analyzer.go` with `var XxxAnalyzer = &analysis.Analyzer{...}`
+2. Implement `Run` function: iterate `pass.Files`, filter `_test.go`, process `*ast.FuncDecl`
+3. Register in `analyzer/analyzers.go` → `AllAnalyzers()`
+4. Add testdata in `analyzer/testdata/src/<name>/<name>_test.go` with `// want` comments
+5. Add package mapping in `analyzer/analyzer_test.go` → `analyzerPackages`
 
 ### Conventions
 
-- Detector files are named `<smell_name>_detector.go`
+- Analyzer files are named `<smell_name>_analyzer.go`
 - `isTestFunc()` and `isHelperFunc()` in `detector.go` are shared helpers for identifying test/helper functions by signature
-- `ScanSource(src string)` is the primary method for unit testing detectors — pass Go source as a string
+- `isPkgCall()` uses type info to resolve package identity (handles aliases and shadowing)
+- Use `testingParamName()` to get `*testing.T` parameter name for receiver verification
+- Tests use `analysistest.Run` with testdata directories
 - Messages and display names are in Japanese

@@ -2,6 +2,7 @@ package analyzer
 
 import (
 	"go/ast"
+	"go/types"
 	"strings"
 
 	"golang.org/x/tools/go/analysis"
@@ -39,11 +40,10 @@ func runSleepyTest(pass *analysis.Pass) (any, error) {
 				if !ok {
 					return true
 				}
-				ident, ok := sel.X.(*ast.Ident)
-				if !ok {
+				if sel.Sel.Name != "Sleep" {
 					return true
 				}
-				if ident.Name == "time" && sel.Sel.Name == "Sleep" {
+				if isPkgCall(pass, sel, "time") {
 					pass.Reportf(call.Pos(), "time.Sleep() はテストを不安定にします。チャネルやsync.WaitGroupの使用を検討してください")
 				}
 				return true
@@ -51,4 +51,22 @@ func runSleepyTest(pass *analysis.Pass) (any, error) {
 		}
 	}
 	return nil, nil
+}
+
+// isPkgCall は SelectorExpr のレシーバが指定パッケージパスのパッケージ名か判定する。
+// エイリアスインポートやシャドウされたローカル変数にも正しく対応する。
+func isPkgCall(pass *analysis.Pass, sel *ast.SelectorExpr, pkgPath string) bool {
+	ident, ok := sel.X.(*ast.Ident)
+	if !ok {
+		return false
+	}
+	obj := pass.TypesInfo.Uses[ident]
+	if obj == nil {
+		return false
+	}
+	pkgName, ok := obj.(*types.PkgName)
+	if !ok {
+		return false
+	}
+	return pkgName.Imported().Path() == pkgPath
 }

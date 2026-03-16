@@ -39,11 +39,10 @@ func runRedundantPrint(pass *analysis.Pass) (any, error) {
 				if !ok {
 					return true
 				}
-				ident, ok := sel.X.(*ast.Ident)
-				if !ok {
+				if !printFuncs[sel.Sel.Name] {
 					return true
 				}
-				if ident.Name == "fmt" && printFuncs[sel.Sel.Name] {
+				if isPkgCall(pass, sel, "fmt") {
 					pass.Reportf(call.Pos(), "fmt.%s() の代わりに t.Log() を使用してください", sel.Sel.Name)
 				}
 				return true
