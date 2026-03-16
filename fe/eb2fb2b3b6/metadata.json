@@ -1,0 +1,29 @@
+{
+  "cli_version": "0.4.8",
+  "checkpoint_id": "feeb2fb2b3b6",
+  "strategy": "manual-commit",
+  "branch": "fix/module-path",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "analyzer/analyzer_test.go",
+    "cmd/savanna-vet/main.go",
+    "cmd/savanna/main.go",
+    "go.mod"
+  ],
+  "sessions": [
+    {
+      "metadata": "/fe/eb2fb2b3b6/0/metadata.json",
+      "transcript": "/fe/eb2fb2b3b6/0/full.jsonl",
+      "context": "/fe/eb2fb2b3b6/0/context.md",
+      "content_hash": "/fe/eb2fb2b3b6/0/content_hash.txt",
+      "prompt": "/fe/eb2fb2b3b6/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 24,
+    "cache_creation_tokens": 20165,
+    "cache_read_tokens": 436185,
+    "output_tokens": 3696,
+    "api_call_count": 17
+  }
+}

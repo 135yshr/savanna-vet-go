@@ -1,0 +1,33 @@
+{
+  "cli_version": "0.4.8",
+  "checkpoint_id": "feeb2fb2b3b6",
+  "session_id": "efd6834a-82b9-43b5-aced-3759acdd78d3",
+  "strategy": "manual-commit",
+  "created_at": "2026-03-16T06:54:58.233772Z",
+  "branch": "fix/module-path",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "analyzer/analyzer_test.go",
+    "cmd/savanna-vet/main.go",
+    "cmd/savanna/main.go",
+    "go.mod"
+  ],
+  "agent": "Claude Code",
+  "turn_id": "e8da48c7ba40",
+  "token_usage": {
+    "input_tokens": 24,
+    "cache_creation_tokens": 20165,
+    "cache_read_tokens": 436185,
+    "output_tokens": 3696,
+    "api_call_count": 17
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-03-16T06:54:58.196336Z",
+    "agent_lines": 4,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 4,
+    "agent_percentage": 100
+  }
+}
