@@ -8,10 +8,10 @@ A Go CLI tool that detects test smells in Go test files.
 
 ## Overview
 
-savanna analyzes Go test files using AST parsing and detects common test smells — patterns that indicate potential issues with test quality and maintainability. When smells are detected, a lion ASCII art roars with a [@t_wada](https://github.com/t-wada) meme message.
+savanna analyzes Go test files using the `go/analysis` framework and detects common test smells — patterns that indicate potential issues with test quality and maintainability. Integrates with `go vet -vettool` for seamless CI/editor support.
 
-- **Zero external dependencies** — stdlib only
-- **Fast** — leverages `go/ast` and `go/parser` for static analysis
+- **`go vet` integration** — works as a standard `vettool`
+- **Fast** — leverages `go/analysis` for static analysis
 - **Configurable** — enable/disable individual smell detectors
 
 ## Supported Test Smells
@@ -31,6 +31,7 @@ savanna analyzes Go test files using AST parsing and detects common test smells 
 
 ```bash
 go install github.com/135yshr/savanna-vet-go/cmd/savanna@latest
+go install github.com/135yshr/savanna-vet-go/cmd/savanna-vet@latest
 ```
 
 ### Build from source
@@ -39,50 +40,50 @@ go install github.com/135yshr/savanna-vet-go/cmd/savanna@latest
 git clone https://github.com/135yshr/savanna-vet-go.git
 cd savanna-vet-go
 go build -o savanna ./cmd/savanna/
+go build -o savanna-vet ./cmd/savanna-vet/
 ```
 
 ## Usage
 
+### go vet integration (recommended)
+
+You can use `savanna-vet` as a `go vet -vettool` plugin.
+
 ```bash
-# Scan the current directory
-savanna .
+# Run via go vet
+go vet -vettool=$(which savanna-vet) ./...
 
-# Scan specific directories
-savanna ./pkg ./internal
+# Run from a local build
+go vet -vettool=./savanna-vet ./...
+```
 
-# Output as JSON
-savanna -format json ./...
+### Standalone (multichecker)
 
-# Exit with code 1 if smells are found (useful for CI)
-savanna -fail ./...
+Both `savanna` and `savanna-vet` are built on `multichecker.Main` / `unitchecker.Main` from `golang.org/x/tools/go/analysis`. The following flags are provided by the analysis framework.
 
-# Enable only specific smells
-savanna -enable EMPTY_TEST,SLEEPY_TEST ./...
+```bash
+# Analyze packages
+savanna ./...
 
-# Disable specific smells
-savanna -disable MAGIC_NUMBER_TEST ./...
+# Output diagnostics as JSON
+savanna -json ./...
 
-# List all available smell types
-savanna -list
+# Disable a specific analyzer
+savanna -emptytest=false ./...
 
 # Show version
-savanna -version
-
-# Output JSON to custom directory
-savanna -format json -output ./test-reports ./...
+savanna -V
 ```
 
 ### CLI Flags
 
-| Flag | Default | Description |
-|---|---|---|
-| `-format` | `console` | Report format (`console` or `json`) |
-| `-output` | `savanna-reports` | Output directory for JSON reports |
-| `-fail` | `false` | Exit with code 1 when smells are detected |
-| `-enable` | *(all)* | Comma-separated list of smell types to enable |
-| `-disable` | *(none)* | Comma-separated list of smell types to disable |
-| `-list` | `false` | Show all available smell types |
-| `-version` | `false` | Show version |
+| Flag | Description |
+|---|---|
+| `-json` | Output diagnostics in JSON format |
+| `-V` | Show version |
+| `-c N` | Show N lines of context around each diagnostic |
+| `-fix` | Apply suggested fixes |
+| `-ANALYZER=false` | Disable a specific analyzer (e.g. `-emptytest=false`) |
 
 ### Console Output Example
 
