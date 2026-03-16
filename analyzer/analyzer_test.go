@@ -22,7 +22,10 @@ var analyzerPackages = map[string]string{
 func TestAllAnalyzers(t *testing.T) {
 	testdata := analysistest.TestData()
 	for _, a := range analyzer.AllAnalyzers() {
-		pkg := analyzerPackages[a.Name]
+		pkg, ok := analyzerPackages[a.Name]
+		if !ok {
+			t.Fatalf("analyzer %q のテストデータパッケージが analyzerPackages に未登録です", a.Name)
+		}
 		t.Run(a.Name, func(t *testing.T) {
 			analysistest.Run(t, testdata, a, pkg)
 		})

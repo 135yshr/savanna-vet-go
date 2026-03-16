@@ -32,12 +32,13 @@ func runMagicNumberTest(pass *analysis.Pass) (any, error) {
 			if fn.Body == nil {
 				continue
 			}
+			tName := testingParamName(fn)
 			ast.Inspect(fn.Body, func(n ast.Node) bool {
 				call, ok := n.(*ast.CallExpr)
 				if !ok {
 					return true
 				}
-				if !isAssertionCall(call) {
+				if !isAssertionCallWithParam(call, tName) {
 					return true
 				}
 				for _, arg := range call.Args {

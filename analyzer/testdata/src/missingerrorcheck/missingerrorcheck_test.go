@@ -18,3 +18,10 @@ func TestNoIgnore(t *testing.T) {
 	}
 	_ = f
 }
+
+func TestMapLookup(t *testing.T) {
+	m := map[string]int{"a": 1}
+	v, _ := m["a"] // map lookup: last value is bool, not error — should NOT be reported
+	_ = v
+	t.Error("dummy")
+}

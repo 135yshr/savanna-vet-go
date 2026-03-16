@@ -30,8 +30,8 @@ func runConditionalTestLogic(pass *analysis.Pass) (any, error) {
 			if fn.Body == nil {
 				continue
 			}
-			for _, stmt := range fn.Body.List {
-				switch s := stmt.(type) {
+			ast.Inspect(fn.Body, func(n ast.Node) bool {
+				switch s := n.(type) {
 				case *ast.IfStmt:
 					pass.Reportf(s.Pos(), "テスト内に if 文があります。テーブル駆動テストやサブテストの使用を検討してください")
 				case *ast.SwitchStmt:
@@ -40,8 +40,13 @@ func runConditionalTestLogic(pass *analysis.Pass) (any, error) {
 					if !isTableDrivenLoop(s) {
 						pass.Reportf(s.Pos(), "テスト内に for 文があります。テーブル駆動テストでない場合は構造を見直してください")
 					}
+				case *ast.RangeStmt:
+					if !isTableDrivenRangeLoop(s) {
+						pass.Reportf(s.Pos(), "テスト内に range 文があります。テーブル駆動テストでない場合は構造を見直してください")
+					}
 				}
-			}
+				return true
+			})
 		}
 	}
 	return nil, nil

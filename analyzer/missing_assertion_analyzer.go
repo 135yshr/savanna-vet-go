@@ -30,7 +30,8 @@ func runMissingAssertion(pass *analysis.Pass) (any, error) {
 			if fn.Body == nil || len(fn.Body.List) == 0 {
 				continue
 			}
-			if !hasAssertion(fn.Body) {
+			tName := testingParamName(fn)
+			if !hasAssertionWithParam(fn.Body, tName) {
 				pass.Reportf(fn.Pos(), "テスト関数にアサーションがありません")
 			}
 		}
