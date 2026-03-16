@@ -1,4 +1,4 @@
-module github.com/135yshr/savanna
+module github.com/135yshr/savanna-vet-go
 
 go 1.25.0
 

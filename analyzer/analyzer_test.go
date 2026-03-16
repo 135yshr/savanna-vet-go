@@ -5,7 +5,7 @@ import (
 
 	"golang.org/x/tools/go/analysis/analysistest"
 
-	"github.com/135yshr/savanna/analyzer"
+	"github.com/135yshr/savanna-vet-go/analyzer"
 )
 
 var analyzerPackages = map[string]string{
