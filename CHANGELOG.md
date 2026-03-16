@@ -1,3 +1,8 @@
+# [v0.1.1](https://github.com/135yshr/savanna-vet-go/compare/v0.1.0...v0.1.1) (2026-03-16)
+
+## 🐛 Bug Fixes
+- [`93bebab`](https://github.com/135yshr/savanna-vet-go/commit/93bebab)  fix: Address PR review comments
+
 # [v0.1.0](https://github.com/135yshr/savanna-vet-go/compare/v0.0.0...v0.1.0) (2026-03-16)
 
 ## ✨ New Features
