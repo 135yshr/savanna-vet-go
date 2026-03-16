@@ -2,7 +2,10 @@ package analyzer
 
 import (
 	"go/ast"
+	"go/types"
 	"strings"
+
+	"golang.org/x/tools/go/analysis"
 )
 
 // isTestFunc はテスト関数かどうかを判定する。
@@ -195,6 +198,24 @@ var allowedNumbers = map[string]bool{
 	"1.0":   true,
 	"true":  true,
 	"false": true,
+}
+
+// isPkgCall は SelectorExpr のレシーバが指定パッケージパスのパッケージ名か判定する。
+// エイリアスインポートやシャドウされたローカル変数にも正しく対応する。
+func isPkgCall(pass *analysis.Pass, sel *ast.SelectorExpr, pkgPath string) bool {
+	ident, ok := sel.X.(*ast.Ident)
+	if !ok {
+		return false
+	}
+	obj := pass.TypesInfo.Uses[ident]
+	if obj == nil {
+		return false
+	}
+	pkgName, ok := obj.(*types.PkgName)
+	if !ok {
+		return false
+	}
+	return pkgName.Imported().Path() == pkgPath
 }
 
 // isTableDrivenLoop はテーブル駆動テストの for ループかどうかを判定する。
