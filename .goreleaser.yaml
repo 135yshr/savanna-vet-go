@@ -1,0 +1,70 @@
+version: 2
+
+release: {}
+
+builds:
+  - id: savanna
+    binary: savanna
+    main: ./cmd/savanna
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.ShortCommit}}
+      - -X main.date={{.Date}}
+    env:
+      - CGO_ENABLED=0
+    targets:
+      - linux_amd64
+      - linux_arm64
+      - darwin_amd64
+      - darwin_arm64
+      - windows_amd64
+
+  - id: savanna-vet
+    binary: savanna-vet
+    main: ./cmd/savanna-vet
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.ShortCommit}}
+      - -X main.date={{.Date}}
+    env:
+      - CGO_ENABLED=0
+    targets:
+      - linux_amd64
+      - linux_arm64
+      - darwin_amd64
+      - darwin_arm64
+      - windows_amd64
+
+archives:
+  - formats:
+      - tar.gz
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+
+changelog:
+  sort: asc
+  groups:
+    - title: "Added"
+      regexp: "\\bfeat\\b"
+      order: 0
+    - title: "Fixed"
+      regexp: "\\bfix\\b"
+      order: 1
+    - title: "Changed"
+      regexp: "\\b(refactor|style|perf|chore|ci|build)\\b"
+      order: 2
+    - title: "Removed"
+      regexp: "\\b(remove|delete)\\b"
+      order: 3
+    - title: "Other"
+      order: 999
+  filters:
+    exclude:
+      - "\\bdocs:"
+      - "\\btest:"
+      - "Merge"
+      - "\\(#\\d+\\)$"
