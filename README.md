@@ -47,58 +47,43 @@ go build -o savanna-vet ./cmd/savanna-vet/
 
 ### go vet integration (recommended)
 
-`savanna-vet` を `go vet -vettool` として使用できます。
+You can use `savanna-vet` as a `go vet -vettool` plugin.
 
 ```bash
-# go vet 経由で実行
+# Run via go vet
 go vet -vettool=$(which savanna-vet) ./...
 
-# ローカルビルドから実行
+# Run from a local build
 go vet -vettool=./savanna-vet ./...
 ```
 
 ### Standalone (multichecker)
 
+Both `savanna` and `savanna-vet` are built on `multichecker.Main` / `unitchecker.Main` from `golang.org/x/tools/go/analysis`. The following flags are provided by the analysis framework.
+
 ```bash
-# Scan the current directory
-savanna .
+# Analyze packages
+savanna ./...
 
-# Scan specific directories
-savanna ./pkg ./internal
+# Output diagnostics as JSON
+savanna -json ./...
 
-# Output as JSON
-savanna -format json ./...
-
-# Exit with code 1 if smells are found (useful for CI)
-savanna -fail ./...
-
-# Enable only specific smells
-savanna -enable EMPTY_TEST,SLEEPY_TEST ./...
-
-# Disable specific smells
-savanna -disable MAGIC_NUMBER_TEST ./...
-
-# List all available smell types
-savanna -list
+# Disable a specific analyzer
+savanna -emptytest=false ./...
 
 # Show version
-savanna -version
-
-# Output JSON to custom directory
-savanna -format json -output ./test-reports ./...
+savanna -V
 ```
 
 ### CLI Flags
 
-| Flag | Default | Description |
-|---|---|---|
-| `-format` | `console` | Report format (`console` or `json`) |
-| `-output` | `savanna-reports` | Output directory for JSON reports |
-| `-fail` | `false` | Exit with code 1 when smells are detected |
-| `-enable` | *(all)* | Comma-separated list of smell types to enable |
-| `-disable` | *(none)* | Comma-separated list of smell types to disable |
-| `-list` | `false` | Show all available smell types |
-| `-version` | `false` | Show version |
+| Flag | Description |
+|---|---|
+| `-json` | Output diagnostics in JSON format |
+| `-V` | Show version |
+| `-c N` | Show N lines of context around each diagnostic |
+| `-fix` | Apply suggested fixes |
+| `-ANALYZER=false` | Disable a specific analyzer (e.g. `-emptytest=false`) |
 
 ### Console Output Example
 
