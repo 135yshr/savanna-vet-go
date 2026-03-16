@@ -1,0 +1,26 @@
+{
+  "cli_version": "0.4.8",
+  "checkpoint_id": "51b1b513501c",
+  "strategy": "manual-commit",
+  "branch": "docs/add-go-vet-usage",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "README.md"
+  ],
+  "sessions": [
+    {
+      "metadata": "/51/b1b513501c/0/metadata.json",
+      "transcript": "/51/b1b513501c/0/full.jsonl",
+      "context": "/51/b1b513501c/0/context.md",
+      "content_hash": "/51/b1b513501c/0/content_hash.txt",
+      "prompt": "/51/b1b513501c/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 19,
+    "cache_creation_tokens": 17904,
+    "cache_read_tokens": 627157,
+    "output_tokens": 2208,
+    "api_call_count": 14
+  }
+}
